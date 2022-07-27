@@ -1,5 +1,5 @@
 ---
-title: "R Notebook"
+title: "Taller: R para Ciencia de Datos (Grupo de estudio) | Capítulo 15: Factores"
 output:
   html_document:
     df_print: paged
@@ -38,10 +38,10 @@ library(tidyverse)
 
 ```{bash eval=FALSE, include=FALSE}
 # Método 1
-git clone ...
+git clone git@github.com:jstrappa/r4ds_taller_15_factores.git
 
 # Método 2
-curl ...
+# TODO
 ```
 
 
@@ -49,7 +49,7 @@ curl ...
 
 ### Taller: R para Ciencia de Datos (Grupo de estudio)
 
-Presenta: **Jan Strappa** ([jansf.netlify.app](jansf.netlify.app))
+Presenta: **Jan Strappa** ([jansf.netlify.app](https://jansf.netlify.app))
 
 Capítulo: **15. Factores** [https://es.r4ds.hadley.nz/factores.html](https://es.r4ds.hadley.nz/factores.html)
 
