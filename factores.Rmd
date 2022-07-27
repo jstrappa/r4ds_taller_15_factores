@@ -1,0 +1,437 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+# Factores
+
+## Prerrequisitos
+
+![](logo.png)    
+
+1. Paquete `forcats` (*FactOR CATegorical variableS*) y otros de `tidyverse`:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(forcats)
+library(readr)
+library(dplyr)
+library(stringr)
+library(ggplot2)
+
+# Para ver mejor algunos resultados
+options(pillar.print_max = 16)
+```
+
+O bien solo:
+
+```{r eval=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+
+
+
+2. Clonar o descargar repositorio:
+
+```{bash eval=FALSE, include=FALSE}
+# Método 1
+git clone ...
+
+# Método 2
+curl ...
+```
+
+
+## Introducción
+
+### Taller: R para Ciencia de Datos (Grupo de estudio)
+
+Presenta: **Jan Strappa** ([jansf.netlify.app](jansf.netlify.app))
+
+Capítulo: **15. Factores** [https://es.r4ds.hadley.nz/factores.html](https://es.r4ds.hadley.nz/factores.html)
+
+
+
+### ¿Qué es un factor?
+
+> En estadística, una variable categórica es una variable que puede tomar uno de un número limitado, y por lo general fijo, de posibles valores, asignando a cada unidad individual u otro tipo observación a un grupo en particular o categoría nominal sobre la base de alguna característica cualitativa.
+> 
+> [Wikipedia: Variable categórica](https://es.wikipedia.org/wiki/Variable_categ%C3%B3rica)
+
+
+Ejemplos de variables categóricas:
+
+- género
+- país, provincia, territorio
+- empleo
+- nacionalidad
+
+**PREGUNTA: ¿Se te ocurren otros ejemplos de variables categóricas? ¿Has trabajado o trabajas con ellas? 💬**
+
+
+### Cadenas como factores: el debate 
+
+[stringsAsFactors: An unauthorized biography](https://simplystatistics.org/posts/2015-07-24-stringsasfactors-an-unauthorized-biography/)
+
+‘stringsAsFactors’ es un argumento de la función ‘data.frame()’. 
+Por defecto, todas las cadenas se convierten a factores en R.
+
+Algunes se preguntan:
+
+> Why does stringsAsFactors not default to FALSE????
+
+- Los factores sirven para codificar datos categóricos de forma útil para funciones de modelado. 
+- En datos tabulares, generalmente una cadena = un dato categórico.
+- Los análisis estadísticos tradicionales suelen usar ampliamente datos categóricos.
+
+
+Controversia:
+
+- Personas con trasfondo estadístico tienden a usar cadenas como factores (`stringsAsFactors=TRUE` tiene sentido para ellas).
+- Otras personas usan R para casos de uso no tradicionales, por ejemplo, cadenas como etiquetas (genética). (Estas son las personas que desearían `stringsAsFactors=FALSE` por defecto 🙋)
+
+Actualmente, muchas funciones no realizan coerción de cadenas a factores, por ejemplo, `readr`^[https://peerj.com/preprints/3163/].
+
+
+## Creando factores
+
+```{r}
+
+# Variable categórica: meses
+x1 <- c("Dic", "Abr", "Ene", "Mar")
+
+# Variable que contiene un dato con error de tipeo
+x2 <- c("Dic", "Abr", "Eme", "Mar")
+
+# El orden es alfabético
+sort(x1)
+
+# Crear un factor: niveles
+niveles_meses <- c(
+  "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+  "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+)
+
+# Crear el factor
+# (Si omites los niveles, se van a definir a partir de los datos en orden alfabético)
+y1 <- factor(x1, levels = niveles_meses)
+```
+
+Otro ejemplo:
+
+```{r}
+
+# Variable categórica: ¿qué lenguajes de programación sabés?
+lenguajes <- c("R", "Python", "C#", "Julia")
+
+# Crear un factor: niveles
+niveles_lenguajes <- c(
+  "R", "C", "C++", "C#", "Julia", "Python",
+  "Ada", "Go", "Rust", "Octave", "MATLAB", "Java"
+)
+
+# Crear el factor
+# (Si omites los niveles, se van a definir a partir de los datos en orden alfabético)
+lenguajes_factor <- factor(lenguajes, levels = niveles_lenguajes)
+
+```
+
+
+
+
+
+## Ventajas de usar factores
+
+
+### Ventaja: ordenamiento
+
+```{r}
+# No es factor: orden alfabético
+print(sort(x1))
+
+# Es factor: orden según niveles definidos en el factor
+print(sort(y1))
+
+```
+
+
+### Ventaja: advertencia si hay niveles mal escritos
+
+```{r}
+y2 <- parse_factor(x2, levels = niveles_meses)
+# Warning: 1 parsing failure.
+# row col           expected actual
+#   3  -- value in level set    Eme
+```
+
+Ejemplo de lenguajes:
+
+```{r}
+
+# Datos con variantes para el lenguaje de programación C#
+lenguajes2 <- c("C-sharp", "Python", "C#", "Julia", "C Sharp", "Go", "Java", "C♯")
+
+# parse_factor nos advierte
+lenguajes2_factor <- parse_factor(lenguajes2, levels = niveles_lenguajes)
+ 
+# Warning: 3 parsing failures.
+# row col           expected  actual
+#   1  -- value in level set C-sharp
+#   5  -- value in level set C Sharp
+#   7  -- value in level set Java  
+```
+
+(¿Cómo hacemos para resolver esto? Lo veremos al final.)
+
+### Se pueden definir niveles definidos en base a su aparición en los datos:
+
+```{r}
+f1 <- factor(x1, levels = unique(x1))
+
+f2 <- x1 %>% factor() %>% fct_inorder()
+
+levels(f2)
+```
+
+
+**PREGUNTA: ¿Se pueden ordenar los niveles de otra forma? 💬**
+
+**Tip 1:**
+
+Para ver todas las funciones de `forcats`^[http://fisher.stats.uwo.ca/faculty/aim/2018/9864/RNotebooks/08_factors/08_LectureNote_forcatsPackage_Nov18.html]:
+
+```{r}
+ls("package:forcats") %>% str_subset(., "^fct_")
+```
+
+**Tip 2: **
+
+Podés ver la ayuda de la función que acabamos de usar con `?fct_inorder()`.
+
+**SOLUCIÓN:**
+
+```{r solucion-orden}
+#
+#
+# SPOILER
+#
+#
+#
+# Sí, usando `fct_infreq()` o `fct_inseq()` (por frecuencia, o por secuencia numérica)
+f3 <- x1 %>% factor() %>% fct_infreq()
+
+levels(f3)
+```
+
+### Ejemplo: Leyes sobre orientación sexual en el mundo en 2020
+
+Tema: [Sexual orientation laws](https://ilga.org/es/mapas-legislacion-sobre-orientacion-sexual)
+
+[Reporte en pdf](https://ilga.org/downloads/ILGA_Mundo_Homofobia_de_Estado_Actualizacion_Panorama_global_Legislacion_diciembre_2020.pdf)
+
+[Datos en formato csv (Kaggle)](https://www.kaggle.com/datasets/mpwolke/cusersmarildownloadsomophobiacsv)
+
+[Datos originales en formato xlsx](https://ilga.org/downloads/ILGA_State_Sponsored_Homophobia_2020_dataset.xlsx)
+
+```{r}
+leyes <- read_csv2("homophobia.csv", show_col_types = FALSE)
+
+
+leyes <- leyes %>% mutate_if(is.character, factor)
+
+# En cuántos países son legales los actos sexuales consensuales entre personas adultas del mismo sexo (ASCAMS)
+leyes %>%
+  count(`CSSSA LEGAL?`)
+
+
+ggplot(leyes, aes(`CSSSA LEGAL?`)) +
+  geom_bar()
+
+```
+
+
+### Ordenando y visualizando datos sobre la descriminalización
+
+`MAX PENALTY` indica la máxima cantidad de años de prisión por delitos en relación a ASCAMS. También incluye otras categorías como pena de muerte, indeterminado, variable y "-" (no aplica, es decir, no se criminalizan).
+
+```{r}
+# No está ordenado de forma útil  
+levels(leyes$`MAX PENALTY`)
+
+# En orden de aparición en el dataset, no muy claro
+leyes %>% 
+  count(`MAX PENALTY`) 
+
+
+# En orden de frecuencia
+leyes %>% 
+  mutate(`MAX PENALTY` = `MAX PENALTY` %>% fct_infreq()) %>%
+  count(`MAX PENALTY`) 
+
+
+# En orden numérico
+leyes %>% 
+  mutate(`MAX PENALTY` = `MAX PENALTY` %>% fct_inseq()) %>%
+  count(`MAX PENALTY`) 
+```
+
+Pero "-" son los países que no criminalizan (sin pena), por lo tanto sería razonable **que estén al comienzo**. Para esto podemos usar `relevel()`:
+
+```{r}
+# En orden numérico, con "-" al comienzo
+leyes %>% 
+  mutate(`MAX PENALTY` = `MAX PENALTY` %>% fct_inseq() %>% relevel(`MAX PENALTY`,ref="-")) %>%
+  count(`MAX PENALTY`) 
+
+```
+
+Los valores `DEATH` y `DEATH (P)` son similares: 
+
+`DEATH`
+
+> Países para los que ILGA Mundo pudo confirmar que existe certeza jurídica de que la pena de muerte (PM) es el castigo
+> establecido para los actos sexuales consensuales entre adultes del mismo sexo (ASCAMS)
+
+`DEATH (P)` 
+ 
+> Países para los que no existe una total certeza jurídica de que la pena de muerte (PM) sea el castigo establecido para los actos
+> sexuales consensuales entre personas del mismo sexo (ASCAMS)
+
+Podemos agruparlos para simplificar la visualización:
+
+```{r}
+# Agrupar
+leyes %>%
+  mutate(`MAX PENALTY` = fct_recode(`MAX PENALTY`, 
+                          "DEATH" = "DEATH", 
+                          "DEATH" = "DEATH (P)")) %>%
+  count(`MAX PENALTY`) 
+
+# O simplemente
+leyes %>%
+  mutate(`MAX PENALTY` = fct_collapse(`MAX PENALTY`, 
+                          "DEATH" = c("DEATH", "DEATH (P)"))) %>%
+  count(`MAX PENALTY`) 
+
+```
+
+
+Integramos las dos modificaciones y graficamos:
+
+```{r}
+leyes %>%
+  mutate(`MAX PENALTY` = `MAX PENALTY` %>% fct_inseq() %>% relevel(`MAX PENALTY`,ref="-")) %>%
+  mutate(`MAX PENALTY` = fct_collapse(`MAX PENALTY`, 
+                          "DEATH" = c("DEATH", "DEATH (P)"))) %>%
+  count(`MAX PENALTY`)
+```
+
+
+```{r}
+p <- leyes %>%
+  mutate(`MAX PENALTY` = `MAX PENALTY` %>% fct_inseq() %>% relevel(`MAX PENALTY`,ref="-")) %>%
+  mutate(`MAX PENALTY` = fct_collapse(`MAX PENALTY`, 
+                          "DEATH" = c("DEATH", "DEATH (P)"))) %>%
+  ggplot(aes(`MAX PENALTY`)) +
+  geom_bar()
+  
+p
+```
+
+
+
+
+
+**PREGUNTA: ¿Cómo podemos mejorar este gráfico? _(Similar a Ejercicio 15.3.1.1)_ 💬**
+
+
+
+```{r solución}
+#
+#
+#
+#
+#
+#
+# SPOILER
+#
+# SOLUCIÓN:
+#
+#
+#
+#
+#
+#
+```
+
+Varias soluciones posibles^[[https://jrnold.github.io/r4ds-exercise-solutions/factors.html](https://jrnold.github.io/r4ds-exercise-solutions/factors.html)]:
+
+
+Alternativa 1:
+
+```{r}
+p <- p + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+p
+```
+
+
+Alternativa 2:
+
+```{r}
+p <- p + coord_flip()
+  
+p
+```
+
+
+
+
+
+
+## Volviendo al ejemplo de lenguajes de programación
+
+Usando `niveles_lenguajes` y `lenguajes2` (del ejemplo de creación de factores):
+
+**PREGUNTA: ¿Cómo podemos hacer que las distintas denominaciones de C# sean consideradas equivalentes en el factor? 💬**
+
+```{r}
+# Actualmente todas las formas de escribir C# son consideradas valores diferentes
+unique(lenguajes2)
+
+# Si queremos interpretarlo como factor, hay valores que producen NA
+unique(lenguajes2_factor)
+
+```
+
+Solución:
+
+```{r solucion}
+#
+#
+#
+#
+#
+#
+# SPOILER
+#
+# SOLUCIÓN:
+#
+#
+#
+#
+#
+#
+
+lenguajes2_corregido <- fct_collapse(lenguajes2, "C#" = c("C Sharp", "C-sharp", "C#", "C♯"))
+
+# Ahora la denominación es uniforme
+lenguajes2_corregido
+
+
+```
+
+
+
