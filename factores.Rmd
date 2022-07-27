@@ -55,6 +55,8 @@ Capítulo: **15. Factores** [https://es.r4ds.hadley.nz/factores.html](https://es
 
 ### ¿Qué es un factor?
 
+En R, un factor es un objeto que representa una variable categórica:
+
 > En estadística, una variable categórica es una variable que puede tomar uno de un número limitado, y por lo general fijo, de posibles valores, asignando a cada unidad individual u otro tipo observación a un grupo en particular o categoría nominal sobre la base de alguna característica cualitativa.
 > 
 > [Wikipedia: Variable categórica](https://es.wikipedia.org/wiki/Variable_categ%C3%B3rica)
