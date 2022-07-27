@@ -21,8 +21,6 @@ library(dplyr)
 library(stringr)
 library(ggplot2)
 
-# Para ver mejor algunos resultados
-options(pillar.print_max = 16)
 ```
 
 O bien solo:
