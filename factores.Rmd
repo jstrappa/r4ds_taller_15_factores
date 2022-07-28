@@ -10,16 +10,15 @@ output:
 
 ## Prerrequisitos
 
-0. Entorno para R:
+0.  Entorno para R:
 
-   - tener instalado RStudio: [descarga](https://www.rstudio.com/products/rstudio/download/)
-   - tener cuenta en RStudio Cloud: [rstudio.cloud](https://rstudio.cloud/)
-   - tener cuenta en Google Colab: [colab.research.google.com](https://colab.research.google.com/)
-
+    -   tener instalado RStudio: [descarga](https://www.rstudio.com/products/rstudio/download/)
+    -   tener cuenta en RStudio Cloud: [rstudio.cloud](https://rstudio.cloud/)
+    -   tener cuenta en Google Colab: [colab.research.google.com](https://colab.research.google.com/)
 
 ![](logo.png)
 
-1. Paquete `forcats` (*FactOR CATegorical variableS*) y otros de `tidyverse`:
+1.  Paquete `forcats` (*FactOR CATegorical variableS*) y otros de `tidyverse`:
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(forcats)
@@ -36,10 +35,7 @@ O bien solo:
 library(tidyverse)
 ```
 
-
-
-
-2. Clonar o descargar repositorio:
+2.  Clonar o descargar repositorio:
 
 ```{bash eval=FALSE}
 # Método 1
@@ -52,16 +48,19 @@ https://github.com/jstrappa/r4ds_taller_15_factores.git
 https://e1.pcloud.link/publink/show?code=kZGDlLZ2v8nlG29WrpyYlC6lGt2dbjIUjeX
 ```
 
-
 ## Introducción
 
 ### Taller: R para Ciencia de Datos (Grupo de estudio)
 
-Presenta: **Jan Strappa** ([jansf.netlify.app](https://jansf.netlify.app))
+Presenta: **Jan Strappa**
 
-Capítulo: **15. Factores** [https://es.r4ds.hadley.nz/factores.html](https://es.r4ds.hadley.nz/factores.html)
+Investigadore postdoctoral (CONICET / UTN FRM)
 
+Coorganizadore de [R-Ladies Mendoza](https://www.meetup.com/es-ES/rladies-mendoza/)
 
+([jansf.netlify.app](https://jansf.netlify.app))
+
+Capítulo: **15. Factores** <https://es.r4ds.hadley.nz/factores.html>
 
 ### ¿Qué es un factor?
 
@@ -71,40 +70,37 @@ En R, un factor es un objeto que representa una variable categórica:
 >
 > [Wikipedia: Variable categórica](https://es.wikipedia.org/wiki/Variable_categ%C3%B3rica)
 
-
 Ejemplos de variables categóricas:
 
-- género
-- país, provincia, territorio
-- empleo
-- nacionalidad
+-   género
+-   país, provincia, territorio
+-   empleo
+-   nacionalidad
 
 **PREGUNTA: ¿Se te ocurren otros ejemplos de variables categóricas? ¿Has trabajado o trabajas con ellas? 💬**
-
 
 ### Cadenas como factores: el debate
 
 [stringsAsFactors: An unauthorized biography](https://simplystatistics.org/posts/2015-07-24-stringsasfactors-an-unauthorized-biography/)
 
-‘stringsAsFactors’ es un argumento de la función ‘data.frame()’.
-Por defecto, todas las cadenas se convierten a factores en R.
+'stringsAsFactors' es un argumento de la función 'data.frame()'. Por defecto, todas las cadenas se convierten a factores en R.
 
 Algunes se preguntan:
 
 > Why does stringsAsFactors not default to FALSE????
 
-- Los factores sirven para codificar datos categóricos de forma útil para funciones de modelado.
-- En datos tabulares, generalmente una cadena = un dato categórico.
-- Los análisis estadísticos tradicionales suelen usar ampliamente datos categóricos.
-
+-   Los factores sirven para codificar datos categóricos de forma útil para funciones de modelado.
+-   En datos tabulares, generalmente una cadena = un dato categórico.
+-   Los análisis estadísticos tradicionales suelen usar ampliamente datos categóricos.
 
 Controversia:
 
-- Personas con trasfondo estadístico tienden a usar cadenas como factores (`stringsAsFactors=TRUE` tiene sentido para ellas).
-- Otras personas usan R para casos de uso no tradicionales, por ejemplo, cadenas como etiquetas (genética). (Estas son las personas que desearían `stringsAsFactors=FALSE` por defecto 🙋)
+-   Personas con trasfondo estadístico tienden a usar cadenas como factores (`stringsAsFactors=TRUE` tiene sentido para ellas).
+-   Otras personas usan R para casos de uso no tradicionales, por ejemplo, cadenas como etiquetas (genética). (Estas son las personas que desearían `stringsAsFactors=FALSE` por defecto 🙋)
 
-Actualmente, muchas funciones no realizan coerción de cadenas a factores, por ejemplo, `readr`^[https://peerj.com/preprints/3163/].
+Actualmente, muchas funciones no realizan coerción de cadenas a factores, por ejemplo, `readr`[^1].
 
+[^1]: <https://peerj.com/preprints/3163/>
 
 ## Creando factores
 
@@ -128,11 +124,14 @@ niveles_meses <- c(
 # Crear el factor
 # (Si omites los niveles, se van a definir a partir de los datos en orden alfabético)
 y1 <- factor(x1, levels = niveles_meses)
+
+# Devuelve la codificación (contraintuitivo cuando trabajamos con datos numéricos)
+as.numeric(y1)
 ```
 
 Otro ejemplo:
 
-```{r}
+```{r ejemplo-programacion}
 
 # Variable categórica: ¿qué lenguajes de programación sabés?
 lenguajes <- c("R", "Python", "C#", "Julia")
@@ -149,12 +148,7 @@ lenguajes_factor <- factor(lenguajes, levels = niveles_lenguajes)
 
 ```
 
-
-
-
-
 ## Ventajas de usar factores
-
 
 ### Ventaja: ordenamiento
 
@@ -167,7 +161,6 @@ print(sort(y1))
 
 ```
 
-
 ### Ventaja: advertencia si hay niveles mal escritos
 
 ```{r}
@@ -179,7 +172,7 @@ y2 <- parse_factor(x2, levels = niveles_meses)
 
 Ejemplo de lenguajes:
 
-```{r}
+```{r ejemplo-programacion2}
 
 # Datos con variantes para el lenguaje de programación C#
 lenguajes2 <- c("C-sharp", "Python", "C#", "Julia", "C Sharp", "Go", "Java", "C♯")
@@ -206,18 +199,19 @@ f2 <- x1 %>% factor() %>% fct_inorder()
 levels(f2)
 ```
 
-
 **PREGUNTA: ¿Se pueden ordenar los niveles de otra forma? 💬**
 
 **Tip 1:**
 
-Para ver todas las funciones de `forcats`^[http://fisher.stats.uwo.ca/faculty/aim/2018/9864/RNotebooks/08_factors/08_LectureNote_forcatsPackage_Nov18.html]:
+Para ver todas las funciones de `forcats`[^2]:
+
+[^2]: <http://fisher.stats.uwo.ca/faculty/aim/2018/9864/RNotebooks/08_factors/08_LectureNote_forcatsPackage_Nov18.html>
 
 ```{r}
 ls("package:forcats") %>% str_subset(., "^fct_")
 ```
 
-**Tip 2: **
+**Tip 2:**
 
 Podés ver la ayuda de la función que acabamos de usar con `?fct_inorder()`.
 
@@ -262,7 +256,6 @@ ggplot(leyes, aes(`CSSSA LEGAL?`)) +
 
 ```
 
-
 ### Ordenando y visualizando datos sobre la descriminalización
 
 `MAX PENALTY` indica la máxima cantidad de años de prisión por delitos en relación a ASCAMS. También incluye otras categorías como pena de muerte, indeterminado, variable y "-" (no aplica, es decir, no se criminalizan).
@@ -302,13 +295,11 @@ Los valores `DEATH` y `DEATH (P)` son similares:
 
 `DEATH`
 
-> Países para los que ILGA Mundo pudo confirmar que existe certeza jurídica de que la pena de muerte (PM) es el castigo
-> establecido para los actos sexuales consensuales entre adultes del mismo sexo (ASCAMS)
+> Países para los que ILGA Mundo pudo confirmar que existe certeza jurídica de que la pena de muerte (PM) es el castigo establecido para los actos sexuales consensuales entre adultes del mismo sexo (ASCAMS)
 
 `DEATH (P)`
 
-> Países para los que no existe una total certeza jurídica de que la pena de muerte (PM) sea el castigo establecido para los actos
-> sexuales consensuales entre personas del mismo sexo (ASCAMS)
+> Países para los que no existe una total certeza jurídica de que la pena de muerte (PM) sea el castigo establecido para los actos sexuales consensuales entre personas del mismo sexo (ASCAMS)
 
 Podemos agruparlos para simplificar la visualización:
 
@@ -328,7 +319,6 @@ leyes %>%
 
 ```
 
-
 Integramos las dos modificaciones y graficamos:
 
 ```{r}
@@ -338,7 +328,6 @@ leyes %>%
                           "DEATH" = c("DEATH", "DEATH (P)"))) %>%
   count(`MAX PENALTY`)
 ```
-
 
 ```{r}
 p <- leyes %>%
@@ -351,13 +340,7 @@ p <- leyes %>%
 p
 ```
 
-
-
-
-
-**PREGUNTA: ¿Cómo podemos mejorar este gráfico? _(Similar a Ejercicio 15.3.1.1)_ 💬**
-
-
+**PREGUNTA: ¿Cómo podemos mejorar este gráfico? *(Similar a Ejercicio 15.3.1.1)*💬**
 
 ```{r solución}
 #
@@ -377,8 +360,9 @@ p
 #
 ```
 
-Varias soluciones posibles^[[https://jrnold.github.io/r4ds-exercise-solutions/factors.html](https://jrnold.github.io/r4ds-exercise-solutions/factors.html)]:
+Varias soluciones posibles[^3]:
 
+[^3]: <https://jrnold.github.io/r4ds-exercise-solutions/factors.html>
 
 Alternativa 1:
 
@@ -387,7 +371,6 @@ p <- p + theme(axis.text.x = element_text(angle = 45, hjust = 1))
 p
 ```
 
-
 Alternativa 2:
 
 ```{r}
@@ -395,11 +378,6 @@ p <- p + coord_flip()
 
 p
 ```
-
-
-
-
-
 
 ## Volviendo al ejemplo de lenguajes de programación
 
