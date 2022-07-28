@@ -17,12 +17,11 @@ output:
 git clone git@github.com:jstrappa/r4ds_taller_15_factores.git
 
 # Método 2
-https://github.com/jstrappa/r4ds_taller_15_factores.git
+git clone https://github.com/jstrappa/r4ds_taller_15_factores.git
 
 # Método 3: descargar desde carpeta compartida:
 https://e1.pcloud.link/publink/show?code=kZGDlLZ2v8nlG29WrpyYlC6lGt2dbjIUjeX
 ```
-
 
 2.  Entorno para R:
 
@@ -48,7 +47,6 @@ O bien solo:
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 ```
-
 
 ## Introducción
 
@@ -109,7 +107,7 @@ Actualmente, muchas funciones no realizan coerción de cadenas a factores, por e
 ```{r}
 
 # Variable categórica: meses
-x1 <- c("Dic", "Abr", "Ene", "Mar")
+x1 <- c("Dic", "Abr", "Ene", "Mar", "Mar")
 
 # Variable que contiene un dato con error de tipeo
 x2 <- c("Dic", "Abr", "Eme", "Mar")
