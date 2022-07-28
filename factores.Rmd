@@ -10,7 +10,21 @@ output:
 
 ## Prerrequisitos
 
-0.  Entorno para R:
+1.  Clonar o descargar repositorio:
+
+```{bash eval=FALSE}
+# Método 1
+git clone git@github.com:jstrappa/r4ds_taller_15_factores.git
+
+# Método 2
+https://github.com/jstrappa/r4ds_taller_15_factores.git
+
+# Método 3: descargar desde carpeta compartida:
+https://e1.pcloud.link/publink/show?code=kZGDlLZ2v8nlG29WrpyYlC6lGt2dbjIUjeX
+```
+
+
+2.  Entorno para R:
 
     -   tener instalado RStudio: [descarga](https://www.rstudio.com/products/rstudio/download/)
     -   tener cuenta en RStudio Cloud: [rstudio.cloud](https://rstudio.cloud/)
@@ -18,7 +32,7 @@ output:
 
 ![](logo.png)
 
-1.  Paquete `forcats` (*FactOR CATegorical variableS*) y otros de `tidyverse`:
+3.  Paquete `forcats` (*FactOR CATegorical variableS*) y otros de `tidyverse`:
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(forcats)
@@ -35,18 +49,6 @@ O bien solo:
 library(tidyverse)
 ```
 
-2.  Clonar o descargar repositorio:
-
-```{bash eval=FALSE}
-# Método 1
-git clone git@github.com:jstrappa/r4ds_taller_15_factores.git
-
-# Método 2
-https://github.com/jstrappa/r4ds_taller_15_factores.git
-
-# Método 3: descargar desde carpeta compartida:
-https://e1.pcloud.link/publink/show?code=kZGDlLZ2v8nlG29WrpyYlC6lGt2dbjIUjeX
-```
 
 ## Introducción
 
@@ -189,7 +191,7 @@ lenguajes2_factor <- parse_factor(lenguajes2, levels = niveles_lenguajes)
 
 (¿Cómo hacemos para resolver esto? Lo veremos al final.)
 
-### Se pueden definir niveles definidos en base a su aparición en los datos:
+### Se pueden asignar niveles definidos en base a su aparición en los datos:
 
 ```{r}
 f1 <- factor(x1, levels = unique(x1))
